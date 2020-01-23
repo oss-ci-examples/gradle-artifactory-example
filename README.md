@@ -1,2 +1,3 @@
-# java-gradle-artifactory
-Example project that publishes Java artifacts to JFrog Cloud Artifactory
+# Sample Java Gradle project with OSS automation
+
+Sample Java Gradle project with automation set up to publish to a public repository.
