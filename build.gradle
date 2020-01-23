@@ -7,6 +7,13 @@ allprojects {
 
     plugins.withId('maven-publish') {
         publishing {
+
+            publications {
+                maven(MavenPublication) {
+                    from components.java
+                }
+            }
+
             repositories {
                 maven {
                     url = "$buildDir/repo"
