@@ -1,46 +1,17 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.13.0"
+    }
+}
 allprojects {
     group = "com.sample.java.library"
 
     repositories {
         jcenter()
-    }
-
-    plugins.withId('java-library') {
-        task sourcesJar(type: Jar) {
-            from sourceSets.main.allJava
-            classifier = 'sources'
-        }
-
-        task javadocJar(type: Jar) {
-            from javadoc
-            classifier = 'javadoc'
-        }
-    }
-
-    plugins.withId('maven-publish') {
-        publishing {
-
-            publications {
-                maven(MavenPublication) {
-                    from components.java
-                    artifact sourcesJar
-                    artifact javadocJar
-                }
-            }
-
-            repositories {
-                maven {
-                    url = "$buildDir/repo"
-                }
-            }
-        }
-
-        task publishToLocalRepo(type: Copy) {
-            dependsOn "publish"
-            from "$buildDir/repo"
-            into "${System.getProperty('user.home')}/local-repo"
-        }
-
-        tasks.clean.dependsOn "cleanPublishToLocalRepo"
-    }
+    }    
 }
+
+apply from: "$rootDir/gradle/publishing.gradle"

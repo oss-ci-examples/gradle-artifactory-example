@@ -1,0 +1,64 @@
+apply plugin: 'com.jfrog.artifactory'
+
+/**
+ * Artifactory, plugin docs: https://www.jfrog.com/confluence/display/RTF/Gradle+Artifactory+Plugin
+ */
+artifactory { //default artifactory settings are on the root project
+    contextUrl = 'https://linkedin.jfrog.io/linkedin'
+    publish {
+        repository {
+            repoKey = 'test-repo'
+            username = System.getenv('ARTIFACTORY_USER') ?: ""
+            password = System.getenv('ARTIFACTORY_KEY') ?: ""
+            ivy {
+                ivyLayout = "[organisation]/[module]/[revision]/[module]-[revision].ivy"
+                artifactLayout = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+                mavenCompatible = true
+            }
+        }
+
+        defaults {
+            publications 'maven' //name of the publication
+        }
+
+        publishArtifacts = true
+    }
+    clientConfig.setIncludeEnvVars(false)
+}
+
+/**
+ * Java library and Maven publication settings.
+ * Docs: https://docs.gradle.org/current/userguide/publishing_maven.html
+ */
+subprojects {
+    plugins.withId('maven-publish') {
+        plugins.withId('java-library') {
+            publishing {
+
+                publications {
+                    maven(MavenPublication) { //name of the publication
+                        from components.java
+                        artifact sourcesJar
+                        artifact javadocJar
+                    }
+                }
+
+                //useful for testing - running "publish" will create artifacts/pom in a local dir
+                repositories { maven { url = "$buildDir/repo" } }
+            }
+
+            //useful for testing - running "publishToLocalRepo" will put all artifacts/poms in a dir in the home dir
+            //other Gradle projects may reference those artifacts
+            task publishToLocalRepo(type: Copy) {
+                dependsOn "publish"
+                from "$buildDir/repo"
+                into "${System.getProperty('user.home')}/local-repo"
+            }
+
+            tasks.clean.dependsOn "cleanPublishToLocalRepo"
+
+            apply plugin: 'com.jfrog.artifactory'
+            artifactoryPublish.skip = true //skip build info analysis and publishing
+        }
+    }
+}
