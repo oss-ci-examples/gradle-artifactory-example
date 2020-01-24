@@ -11,11 +11,6 @@ artifactory { //default artifactory settings are on the root project
             repoKey = 'test-repo'
             username = System.getenv('ARTIFACTORY_USER') ?: ""
             password = System.getenv('ARTIFACTORY_KEY') ?: ""
-            ivy {
-                ivyLayout = "[organisation]/[module]/[revision]/[module]-[revision].ivy"
-                artifactLayout = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-                mavenCompatible = true
-            }
         }
 
         defaults {
