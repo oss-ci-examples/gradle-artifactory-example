@@ -6,12 +6,15 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.13.0"
     }
 }
+
 allprojects {
     group = "com.sample.java.library"
 
     repositories {
         jcenter()
-    }    
+    }
+
+    apply plugin: 'idea'
 }
 
 apply from: "$rootDir/gradle/publishing.gradle"
